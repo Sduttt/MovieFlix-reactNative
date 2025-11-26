@@ -4,11 +4,12 @@ import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
 import { fetchMovie } from "@/services/api_config";
 import useFetch from "@/services/useFetch";
+import { useRouter } from "expo-router";
 import { Text, View, Image, ScrollView, ActivityIndicator, FlatList } from "react-native";
 
 
 export default function Index() {
-
+  const router = useRouter();
   const { data: movies, loading: moviesLoading, error: moviesError } = useFetch(() => fetchMovie({ query: "" }));
 
   return (
@@ -25,7 +26,7 @@ export default function Index() {
               <Text className="text-white">Error: {moviesError.message}</Text>
             ) : (
               <View className="flex-1 mt-5">
-                <Searchbar />
+                <Searchbar onPress={() => router.push("/search")} placeholder="Search" />
                 <Text className="text-white text-2xl font-bold mt-5 mb-3">Trending Movies</Text>
                 <FlatList
                   data={movies}
