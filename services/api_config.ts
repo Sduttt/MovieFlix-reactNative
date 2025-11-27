@@ -23,3 +23,29 @@ export const fetchMovie = async ({ query }: { query: string }) => {
     return data.results;
 
 }
+
+export const fetchMovieDetails = async (movieId: string) => {
+    const endpoint = `${TMDB_CONFIG.BASE_URL}/movie/${movieId}?api_key=${TMDB_CONFIG.API_KEY}`;
+    const response = await fetch(endpoint, {
+        method: 'GET',
+        headers: TMDB_CONFIG.Headers
+    })
+    if (!response.ok) {
+        throw new Error(`Failed to fetch movie details: ${response.status} ${response.statusText}`);
+    }
+    const data = await response.json();
+    return data;
+}
+
+export const fetchCastCrew = async (movieId: string) => {
+    const endpoint = `${TMDB_CONFIG.BASE_URL}/movie/${movieId}/credits?language=en-US`;
+    const response = await fetch(endpoint, {
+        method: 'GET',
+        headers: TMDB_CONFIG.Headers
+    })
+    if (!response.ok) {
+        throw new Error(`Failed to fetch cast crew: ${response.status} ${response.statusText}`);
+    }
+    const data = await response.json();
+    return data;
+}
