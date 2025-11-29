@@ -1,11 +1,26 @@
-import React from 'react'
+import Signin from '@/components/Signin'
+import Signup from '@/components/Signup'
+import React, { useState } from 'react'
 import { Text, View } from 'react-native'
 
 const profile = () => {
+    const [isAuth, setIsAuth] = useState(false)
+    const [newUser, setNewUser] = useState(true)
     return (
-        <View>
-            <Text>profile</Text>
-        </View>
+        <>
+            {isAuth ? (
+                <Text>Logged In</Text>
+            ) : (
+                newUser ? (
+                    <>
+                        <Signup />
+                    </>
+                ) : (
+                    <Signin />
+
+                )
+            )}
+        </>
     )
 }
 
