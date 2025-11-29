@@ -4,7 +4,7 @@ import { icons } from '@/constants/icons'
 import { useAuth } from '@/services/AuthContext'
 
 const Signup = () => {
-    const { signup } = useAuth()
+    const { signup, setIsNewUser } = useAuth()
     const [name, setName] = useState<string>('')
     const [email, setEmail] = useState<string>('')
     const [password, setPassword] = useState<string>('')
@@ -20,6 +20,10 @@ const Signup = () => {
             return
         }
         signup(email, password, name)
+    }
+
+    const setNewUserFalse = () => {
+        setIsNewUser(false)
     }
     return (
 
@@ -59,6 +63,15 @@ const Signup = () => {
 
                         <TouchableOpacity onPress={handleSignup} className="w-full bg-[#6C5DD3] p-4 rounded-2xl items-center justify-center shadow-lg shadow-[#6C5DD3]/50">
                             <Text className="text-white font-bold text-lg">Sign Up</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    <View className='flex-row justify-center mt-4'>
+                        <Text className='text-white'>
+                            Already have an account?{' '}
+                        </Text>
+                        <TouchableOpacity onPress={setNewUserFalse}>
+                            <Text className='text-white font-bold'>Sign In</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

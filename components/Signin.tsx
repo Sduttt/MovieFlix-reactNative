@@ -4,16 +4,23 @@ import { icons } from '@/constants/icons'
 import { useAuth } from '@/services/AuthContext'
 
 const Signin = () => {
-    const { login } = useAuth()
+    const { login, isNewUser, setIsNewUser } = useAuth()
     const [email, setEmail] = useState<string>('')
     const [password, setPassword] = useState<string>('')
     const [error, setError] = useState<string | null>(null)
 
-    const handleSignin = () => {
+    const handleSignin = async () => {
         if (!email || !password) {
             setError('Please fill all the fields')
             return
         }
+        const result = await login(email, password)
+        if (result) {
+            setError(result)
+        }
+    }
+    const setNewUserTrue = () => {
+        setIsNewUser(true)
     }
     return (
         <>
@@ -49,9 +56,15 @@ const Signin = () => {
                         <Text className='text-red-500 text-center mt-4'>{error}</Text>
                     </View>
 
-                    {/* <TouchableOpacity className='text-center mt-4 bg-transparent text-white absolute bottom-4' >
-                        <Text>Already have an account? Sign In</Text>
-                    </TouchableOpacity> */}
+
+                    <View className='flex-row justify-center mt-4'>
+                        <Text className='text-white'>
+                            Don't have an account?{' '}
+                        </Text>
+                        <TouchableOpacity onPress={setNewUserTrue}>
+                            <Text className='text-white font-bold'>Sign Up</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </KeyboardAvoidingView>
         </>
