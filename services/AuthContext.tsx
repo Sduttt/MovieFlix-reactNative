@@ -10,6 +10,7 @@ type AuthContextType = {
     login: (email: string, password: string) => Promise<string | null>;
     logout: () => Promise<void>;
     deleteAccount: () => Promise<void>;
+    loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -17,13 +18,18 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<Models.User<Models.Preferences> | null>(null);
     const [isNewUser, setIsNewUser] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
 
     const getUser = async () => {
         try {
+            setLoading(true);
             const user = await account.get();
+            setLoading(false);
             setUser(user);
+
         } catch (error) {
             console.log(error);
+            setLoading(false);
             setUser(null);
         }
     }
@@ -34,9 +40,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const login = async (email: string, password: string) => {
         try {
+            setLoading(true);
             try {
                 await account.deleteSession("current");
-
             } catch (e) {
                 console.log(e);
             }
@@ -44,9 +50,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 email,
                 password
             )
+            setLoading(false);
             await getUser();
             return null;
         } catch (error) {
+            setLoading(false);
             if (error instanceof Error) {
                 return error.message;
             }
@@ -56,27 +64,38 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const signup = async (email: string, password: string, name: string) => {
         try {
+            setLoading(true);
+            console.log("account creating")
             await account.create(
                 ID.unique(),
                 email,
                 password,
                 name
             );
+            console.log("account created, logging in")
+            setLoading(false);
             await login(email, password);
+            console.log("login successful")
             return null;
         } catch (error) {
+            setLoading(false);
             if (error instanceof Error) {
+                console.log(error.message);
                 return error.message;
             }
+            console.log("Signup failed")
             return "Signup failed";
         }
     };
 
     const logout = async () => {
+        setLoading(true);
         try {
             await account.deleteSession("current");
+            setLoading(false);
             setUser(null);
         } catch (error) {
+            setLoading(false);
             console.log(error);
         }
     }
@@ -91,7 +110,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     return (
-        <AuthContext.Provider value={{ user, isNewUser, setIsNewUser, signup, login, logout, deleteAccount }}>
+        <AuthContext.Provider value={{ loading, user, isNewUser, setIsNewUser, signup, login, logout, deleteAccount }}>
             {children}
         </AuthContext.Provider>
     )

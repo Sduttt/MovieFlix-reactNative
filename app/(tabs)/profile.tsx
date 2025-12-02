@@ -5,10 +5,10 @@ import { images } from '@/constants/images'
 import { useAuth } from '@/services/AuthContext'
 import { Link } from 'expo-router'
 import React from 'react'
-import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 
 const profile = () => {
-    const { user, logout, isNewUser, deleteAccount } = useAuth()
+    const { loading, user, logout, isNewUser, deleteAccount } = useAuth()
 
     const getInitials = (name: string) => {
         return name
@@ -22,7 +22,10 @@ const profile = () => {
         <View className='flex-1 bg-primary'>
             <Image source={images.bg} className="w-full absolute z-0" />
 
-            {user ? (
+            {loading ? (
+                <ActivityIndicator size="large" color="#0000ff" className="mt-10 self-center" />
+
+            ) : user ? (
 
                 <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: 'center', padding: 24 }}>
 

@@ -2,6 +2,26 @@
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
+## Project Name: MovieFlix
+
+## Project Description: 
+
+Movieflix is movie library app that allows users to search for movies, view movie details, add to watchlist and mark watched.
+
+## Features to imlement in future:
+
+- Add movie to watchlist
+- Mark movie as watched
+- Remove movie from watchlist
+- Remove movie from watched
+- View watchlist
+- View watched
+- Add ad banners
+- Add in-app purchases to remove ads
+- Add rating feature for users
+- Remove rating
+
+
 ## Get started
 
 1. Install dependencies
@@ -10,7 +30,58 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    npm install
    ```
 
-2. Start the app
+2. Set up Appwrite Project, Authentication, and Database
+
+   Follow these steps to configure your Appwrite backend:
+
+   a. **Install and Run Appwrite**: Ensure you have an Appwrite instance running (e.g., via Docker). Refer to the official Appwrite documentation for installation instructions.
+
+   b. **Create a New Project**:
+      - Create a project in your Appwrite console (e.g., "MovieFlix").
+      - Note `Project ID` and `Project Name` for `EXPO_PUBLIC_APPWRITE_PROJECT_ID` and `EXPO_PUBLIC_APPWRITE_PROJECT_NAME` in your `.env` file.
+
+   c. **Add a Platform**:
+      - In your project, add a "React Native" platform.
+      - For "React Native", enter a `Package Name` (e.g., `com.yourcompany.movieflix`).
+      - Note your Appwrite instance URL for `EXPO_PUBLIC_APPWRITE_ENDPOINT`.
+
+   d. **Configure Authentication**:
+      - Enable "Email/Password" authentication under "Auth" -> "Settings" -> "Providers".
+
+   e. **Create a Database**:
+      - Create a database (e.g., "MovieFlixDB").
+      - Note the `Database ID` for `EXPO_PUBLIC_APPWRITE_DATABASE_ID`.
+
+   f. **Create a Collection**:
+      - Inside your database, create a collection (e.g., "Movies").
+      - Note the `Collection ID` for `EXPO_PUBLIC_APPWRITE_COLLECTION_ID`.
+
+   g. **Add Attributes to the Collection**:
+      - Add the following attributes to the "Movies" collection:
+         - `title` (String, Required)
+         - `overview` (String, Required)
+         - `poster_path` (String, Required)
+         - `release_date` (String, Optional)
+         - `vote_average` (Float, Optional)
+         - `is_watched` (Boolean, Required, Default `false`)
+         - `is_watchlist` (Boolean, Required, Default `false`)
+         - `user_id` (String, Required)
+
+   h. **Set Collection Permissions**:
+      - Set "Create", "Read", "Update", and "Delete" document permissions for the "Users" role in the "Movies" collection. Ensure your application logic enforces ownership (users can only manage their own documents).
+3. Create .env file in the root directory and add the following variables
+
+   ```bash
+   EXPO_PUBLIC_TMDB_API_KEY=
+   EXPO_PUBLIC_TMDB_ACCESS_TOKEN=
+   EXPO_PUBLIC_APPWRITE_PROJECT_ID=
+   EXPO_PUBLIC_APPWRITE_PROJECT_NAME=
+   EXPO_PUBLIC_APPWRITE_ENDPOINT=
+   EXPO_PUBLIC_APPWRITE_DATABASE_ID=
+   EXPO_PUBLIC_APPWRITE_COLLECTION_ID=
+   EXPO_PUBLIC_APPWRITE_PLATFORM=
+   ```
+4. Start the app
 
    ```bash
    npx expo start
