@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Text, View, TouchableOpacity, ScrollView, Image, ToastAndroid, FlatList } from 'react-native'
+import { Text, View, TouchableOpacity, ScrollView, Image, ToastAndroid, FlatList, PanResponder } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { icons } from '@/constants/icons'
 import { images } from '@/constants/images'
@@ -44,6 +44,23 @@ const Saved = () => {
         }, [activeTab, user])
     )
 
+    const panResponder = PanResponder.create({
+        onMoveShouldSetPanResponder: (evt, gestureState) => {
+            // Activate when horizontal swipe is detected
+            return Math.abs(gestureState.dx) > 20;
+        },
+        onPanResponderRelease: (evt, gestureState) => {
+            // Swipe right (dx > 0) - go to watchlist
+            if (gestureState.dx > 50 && activeTab === 'watched') {
+                setActiveTab('watchlist');
+            }
+            // Swipe left (dx < 0) - go to watched
+            else if (gestureState.dx < -50 && activeTab === 'watchlist') {
+                setActiveTab('watched');
+            }
+        },
+    });
+
     return (
         <SafeAreaView className="flex-1 bg-primary">
             <Image source={images.bg} className="w-full absolute z-0" />
@@ -71,7 +88,7 @@ const Saved = () => {
                 </View>
 
                 {/* Content Area */}
-                <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+                <ScrollView {...panResponder.panHandlers} contentContainerStyle={{ paddingBottom: 100 }}>
                     {activeTab === 'watchlist' ? (
                         // Watchlist Content (Empty State)
                         movies.length === 0 ? (
@@ -88,7 +105,7 @@ const Saved = () => {
                                         <MovieCard {...item} id={item.movieId} />
                                     )
                                 }}
-                                keyExtractor={(item) => item.id}
+                                keyExtractor={(item) => item.$id}
                                 numColumns={3}
                                 columnWrapperClassName="flex-start gap-5 pr-5 mb-10"
                                 className="mt-2 pb-32"
@@ -111,7 +128,7 @@ const Saved = () => {
                                         <MovieCard {...item} id={item.movieId} />
                                     )
                                 }}
-                                keyExtractor={(item) => item.id}
+                                keyExtractor={(item) => item.$id}
                                 numColumns={3}
                                 columnWrapperClassName="flex-start gap-5 pr-5 mb-10"
                                 className="mt-2 pb-32"

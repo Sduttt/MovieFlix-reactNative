@@ -4,11 +4,13 @@ import Signup from '@/components/Signup'
 import { images } from '@/constants/images'
 import { useAuth } from '@/services/AuthContext'
 import { Link } from 'expo-router'
-import React from 'react'
-import { ActivityIndicator, Alert, Image, ScrollView, Text, ToastAndroid, TouchableOpacity, View } from 'react-native'
+import React, { useState } from 'react'
+import { ActivityIndicator, Image, Modal, ScrollView, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native'
 
 const profile = () => {
     const { loading, user, logout, isNewUser, deleteAccount } = useAuth()
+    const [showPasswordModal, setShowPasswordModal] = useState(false)
+    const [password, setPassword] = useState('')
 
     const getInitials = (name: string) => {
         return name
@@ -18,6 +20,18 @@ const profile = () => {
             .toUpperCase()
             .substring(0, 2);
     };
+
+    const handleDeleteAccount = async () => {
+        try {
+            await deleteAccount(password)
+            setShowPasswordModal(false)
+            setPassword('')
+            ToastAndroid.show('Account deleted successfully', ToastAndroid.LONG)
+        } catch (error) {
+            ToastAndroid.show('Invalid password or deletion failed', ToastAndroid.LONG)
+        }
+    }
+
     return (
         <View className='flex-1 bg-primary'>
             <Image source={images.bg} className="w-full absolute z-0" />
@@ -64,19 +78,8 @@ const profile = () => {
                             <Text className="text-white font-semibold text-lg">Log Out</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={() => Alert.alert('Delete Account', 'Are you sure you want to delete your account?', [
-                            {
-                                text: 'Cancel',
-                                style: 'cancel',
-                            },
-                            {
-                                text: 'Delete',
-                                onPress: () => {
-                                    ToastAndroid.show('Account deleted successfully', ToastAndroid.LONG)
-                                    deleteAccount()
-                                }
-                            },
-                        ])}
+                        <TouchableOpacity
+                            onPress={() => setShowPasswordModal(true)}
                             className="mt-4 w-full p-4 rounded-2xl border border-red-500/30 bg-red-500/10 flex-row items-center justify-center"
                         >
                             <Text className="text-red-500 font-semibold text-lg">Delete Account</Text>
@@ -98,6 +101,51 @@ const profile = () => {
 
                 )
             )}
+
+            {/* Password Modal */}
+            <Modal
+                visible={showPasswordModal}
+                transparent={true}
+                animationType="fade"
+                onRequestClose={() => setShowPasswordModal(false)}
+            >
+                <View className="flex-1 bg-black/50 justify-center items-center px-6">
+                    <View className="bg-[#1F212C] rounded-3xl p-6 w-full max-w-sm border border-[#2D303E]">
+                        <Text className="text-white text-2xl font-bold mb-2">Delete Account</Text>
+                        <Text className="text-gray-400 text-sm mb-6">Enter your password to confirm account deletion. This action cannot be undone.</Text>
+
+                        <TextInput
+                            className="bg-[#2D303E] text-white p-4 rounded-xl mb-6 border border-[#3D404E]"
+                            placeholder="Enter your password"
+                            placeholderTextColor="#6B7280"
+                            secureTextEntry
+                            value={password}
+                            onChangeText={setPassword}
+                            autoFocus
+                        />
+
+                        <View className="flex-row gap-3">
+                            <TouchableOpacity
+                                onPress={() => {
+                                    setShowPasswordModal(false)
+                                    setPassword('')
+                                }}
+                                className="flex-1 p-4 rounded-xl border border-[#2D303E] bg-[#2D303E]"
+                            >
+                                <Text className="text-white font-semibold text-center">Cancel</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                onPress={handleDeleteAccount}
+                                className="flex-1 p-4 rounded-xl bg-red-500"
+                                disabled={!password}
+                            >
+                                <Text className="text-white font-semibold text-center">Delete</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </View>
     )
 }

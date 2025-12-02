@@ -10,13 +10,11 @@ Movieflix is movie library app that allows users to search for movies, view movi
 
 ## Features to imlement in future:
 
-- implement delete account feature
-- Show trailer of the movie
 - Add rating feature for users
 - Remove rating feature for users
 - Add ad banners
 - Add in-app purchases to remove ads
-
+- create apk of the app
 
 
 ## Get started

@@ -1,12 +1,13 @@
 import { icons } from '@/constants/icons'
 import { getLanguageName } from '@/constants/languages'
-import { fetchCastCrew, fetchMovieDetails } from '@/services/api_config'
+import { fetchCastCrew, fetchMovieDetails, fetchTrailers } from '@/services/api_config'
 import { APPWRITE_CONFIG, databases } from '@/services/appwrite'
 import { useAuth } from '@/services/AuthContext'
 import useFetch from '@/services/useFetch'
 import { router, useLocalSearchParams } from 'expo-router'
 import React, { useState, useEffect } from 'react'
-import { Image, ScrollView, Text, ToastAndroid, TouchableOpacity, View } from 'react-native'
+import { Image, ScrollView, Text, ToastAndroid, TouchableOpacity, View, Modal } from 'react-native'
+import YoutubePlayer from "react-native-youtube-iframe";
 import { ID, Query } from 'react-native-appwrite'
 
 const Movie = () => {
@@ -19,6 +20,18 @@ const Movie = () => {
     const [isWatched, setIsWatched] = useState(false)
     const [doc, setDoc] = useState<any>(null)
     const [alertmsg, setAlertmsg] = useState<string>('')
+    const [trailerKey, setTrailerKey] = useState<string | null>(null)
+    const [modalVisible, setModalVisible] = useState(false)
+
+    useEffect(() => {
+        const getTrailer = async () => {
+            if (id) {
+                const key = await fetchTrailers(id as string)
+                setTrailerKey(key)
+            }
+        }
+        getTrailer()
+    }, [id])
 
     // Check if movie is in watchlist or watched
     const checkStatus = async () => {
@@ -198,6 +211,17 @@ const Movie = () => {
             <ScrollView contentContainerStyle={{ paddingBottom: 80 }}>
                 <View>
                     <Image source={{ uri: `https://image.tmdb.org/t/p/w500${movie?.poster_path}` }} className='w-full h-[550px]' resizeMode='stretch' />
+
+                    {/* Play Button */}
+                    {trailerKey && (
+                        <TouchableOpacity
+                            onPress={() => setModalVisible(true)}
+                            className="absolute top-1/2 left-1/2 -ml-8 -mt-8 w-16 h-16 bg-white/30 rounded-full items-center justify-center backdrop-blur-md border border-white/50"
+                        >
+                            <Image source={icons.play} className="w-8 h-8 tint-white" style={{ tintColor: 'white', marginLeft: 4 }} />
+                        </TouchableOpacity>
+                    )}
+
                     <View className='relative bottom-20 flex-row items-center justify-around px-5'>
                         <TouchableOpacity onPress={saveMovie} disabled={isWatched} className={` ${isWatched ? "bg-[#534d7d]" : "bg-[#6C5DD3]"} flex-row items-center justify-center gap-x-2 w-48 py-1 mr-4 rounded-3xl h-16`}>
                             <Image source={isWatchlist ? icons.brokenHeart : icons.heart} className='size-6' />
@@ -240,8 +264,35 @@ const Movie = () => {
                         <Text className='text-white text-sm mt-1'>{castCrew?.cast.map((cast: any) => cast.name).join(', ')}</Text>
                     </View>
                 </View>
+
             </ScrollView>
-        </View>
+
+            {/* Trailer Modal */}
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => setModalVisible(false)}
+            >
+                <View className="flex-1 bg-black justify-center">
+                    <TouchableOpacity
+                        onPress={() => setModalVisible(false)}
+                        className="absolute top-10 right-5 z-10 p-2"
+                    >
+                        <Text className="text-white text-lg font-bold">Close</Text>
+                    </TouchableOpacity>
+
+                    <YoutubePlayer
+                        height={300}
+                        play={true}
+                        videoId={trailerKey || ""}
+                        onChangeState={(state: any) => {
+                            if (state === "ended") setModalVisible(false);
+                        }}
+                    />
+                </View>
+            </Modal>
+        </View >
     )
 }
 

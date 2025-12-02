@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { ID, Models } from "react-native-appwrite";
 import { account } from "./appwrite";
+import { ToastAndroid } from "react-native";
 
 type AuthContextType = {
     user: Models.User<Models.Preferences> | null;
@@ -9,7 +10,7 @@ type AuthContextType = {
     signup: (email: string, password: string, name: string) => Promise<string | null>;
     login: (email: string, password: string) => Promise<string | null>;
     logout: () => Promise<void>;
-    deleteAccount: () => Promise<void>;
+    deleteAccount: (userPassword: string) => Promise<void>;
     loading: boolean;
 }
 
@@ -56,8 +57,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         } catch (error) {
             setLoading(false);
             if (error instanceof Error) {
+                ToastAndroid.show(error.message, ToastAndroid.LONG);
+                console.log(error.message)
                 return error.message;
             }
+            console.log(error)
             return "Login failed";
         }
     };
@@ -80,6 +84,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         } catch (error) {
             setLoading(false);
             if (error instanceof Error) {
+                ToastAndroid.show(error.message, ToastAndroid.LONG);
                 console.log(error.message);
                 return error.message;
             }
@@ -100,11 +105,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     }
 
-    const deleteAccount = async () => {
+    const deleteAccount = async (userPassword: string) => {
         try {
+            const newMail = `${user?.$id}.${user?.email}`;
+            await account.updateEmail(newMail, userPassword);
             await account.updateStatus();
             setUser(null);
         } catch (error) {
+            ToastAndroid.show("Account deletion failed", ToastAndroid.LONG);
             console.log(error);
         }
     }

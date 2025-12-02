@@ -49,3 +49,16 @@ export const fetchCastCrew = async (movieId: string) => {
     const data = await response.json();
     return data;
 }
+
+export const fetchTrailers = async (movieId: string) => {
+    const endpoint = `${TMDB_CONFIG.BASE_URL}/movie/${movieId}/videos?language=en-US`;
+    const response = await fetch(endpoint, {
+        method: 'GET',
+        headers: TMDB_CONFIG.Headers
+    })
+    if (!response.ok) {
+        throw new Error(`Failed to fetch trailers: ${response.status} ${response.statusText}`);
+    }
+    const data = await response.json();
+    return data.results.find((video: any) => video.type === 'Trailer')?.key;
+}
