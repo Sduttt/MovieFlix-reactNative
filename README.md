@@ -10,16 +10,13 @@ Movieflix is movie library app that allows users to search for movies, view movi
 
 ## Features to imlement in future:
 
-- Add movie to watchlist
-- Mark movie as watched
-- Remove movie from watchlist
-- Remove movie from watched
-- View watchlist
-- View watched
+- implement delete account feature
+- Show trailer of the movie
+- Add rating feature for users
+- Remove rating feature for users
 - Add ad banners
 - Add in-app purchases to remove ads
-- Add rating feature for users
-- Remove rating
+
 
 
 ## Get started

@@ -5,7 +5,7 @@ import { images } from '@/constants/images'
 import { useAuth } from '@/services/AuthContext'
 import { Link } from 'expo-router'
 import React from 'react'
-import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Alert, Image, ScrollView, Text, ToastAndroid, TouchableOpacity, View } from 'react-native'
 
 const profile = () => {
     const { loading, user, logout, isNewUser, deleteAccount } = useAuth()
@@ -64,7 +64,19 @@ const profile = () => {
                             <Text className="text-white font-semibold text-lg">Log Out</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={deleteAccount}
+                        <TouchableOpacity onPress={() => Alert.alert('Delete Account', 'Are you sure you want to delete your account?', [
+                            {
+                                text: 'Cancel',
+                                style: 'cancel',
+                            },
+                            {
+                                text: 'Delete',
+                                onPress: () => {
+                                    ToastAndroid.show('Account deleted successfully', ToastAndroid.LONG)
+                                    deleteAccount()
+                                }
+                            },
+                        ])}
                             className="mt-4 w-full p-4 rounded-2xl border border-red-500/30 bg-red-500/10 flex-row items-center justify-center"
                         >
                             <Text className="text-red-500 font-semibold text-lg">Delete Account</Text>

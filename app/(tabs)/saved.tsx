@@ -1,12 +1,48 @@
-import React, { useState } from 'react'
-import { Text, View, TouchableOpacity, ScrollView, Image } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { Text, View, TouchableOpacity, ScrollView, Image, ToastAndroid, FlatList } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { icons } from '@/constants/icons'
 import { images } from '@/constants/images'
+import { account, APPWRITE_CONFIG, databases } from '@/services/appwrite'
+import { Query } from 'react-native-appwrite'
+import { useAuth } from '@/services/AuthContext'
+import { router, useFocusEffect } from 'expo-router'
+import MovieCard from '@/components/MovieCard'
 
 const Saved = () => {
     // State to track which tab is active
     const [activeTab, setActiveTab] = useState<'watchlist' | 'watched'>('watchlist')
+    const [movies, setMovies] = useState<any[]>([])
+    const { user } = useAuth();
+
+    const fetchMovies = async () => {
+        try {
+            if (!user) {
+                router.push('/profile')
+                ToastAndroid.show('Please login to view saved movies', ToastAndroid.LONG)
+                return
+            }
+            const response = await databases.listDocuments(
+                APPWRITE_CONFIG.databaseId,
+                APPWRITE_CONFIG.collectionId,
+                [
+                    Query.equal('userId', user.$id),
+                    Query.equal('isWatchlist', activeTab === 'watchlist'),
+                    Query.equal('isWatched', activeTab === 'watched')
+                ]
+            )
+            setMovies(response.documents)
+        } catch (error) {
+            console.log(error)
+            ToastAndroid.show('Error fetching saved movies', ToastAndroid.LONG)
+        }
+    }
+
+    useFocusEffect(
+        React.useCallback(() => {
+            fetchMovies()
+        }, [activeTab, user])
+    )
 
     return (
         <SafeAreaView className="flex-1 bg-primary">
@@ -38,18 +74,50 @@ const Saved = () => {
                 <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
                     {activeTab === 'watchlist' ? (
                         // Watchlist Content (Empty State)
-                        <View className="items-center justify-center mt-20">
-                            <Image source={icons.save} className="w-16 h-16 tint-gray-600 mb-4" style={{ tintColor: '#4B5563' }} />
-                            <Text className="text-white text-xl text-center w-full font-bold">Your Watchlist is Empty</Text>
-                            <Text className="text-gray-400 text-center mt-2 px-10">Movies you want to watch will appear here.</Text>
-                        </View>
+                        movies.length === 0 ? (
+                            <View className="items-center justify-center mt-20">
+                                <Image source={icons.save} className="w-16 h-16 tint-gray-600 mb-4" style={{ tintColor: '#4B5563' }} />
+                                <Text className="text-white text-xl text-center w-full font-bold">Your Watchlist is Empty</Text>
+                                <Text className="text-gray-400 text-center mt-2 px-10">Movies you want to watch will appear here.</Text>
+                            </View>
+                        ) : (
+                            <FlatList
+                                data={movies}
+                                renderItem={({ item }) => {
+                                    return (
+                                        <MovieCard {...item} id={item.movieId} />
+                                    )
+                                }}
+                                keyExtractor={(item) => item.id}
+                                numColumns={3}
+                                columnWrapperClassName="flex-start gap-5 pr-5 mb-10"
+                                className="mt-2 pb-32"
+                                scrollEnabled={false}
+                            />
+                        )
                     ) : (
                         // Watched Content (Empty State)
-                        <View className="items-center justify-center mt-20">
-                            <Image source={icons.tick} className="w-16 h-16 tint-gray-600 mb-4" style={{ tintColor: '#4B5563' }} />
-                            <Text className="text-white text-xl font-bold">No Watched Movies</Text>
-                            <Text className="text-gray-400 text-center mt-2 px-10">Movies you mark as watched will appear here.</Text>
-                        </View>
+                        movies.length === 0 ? (
+                            <View className="items-center justify-center mt-20">
+                                <Image source={icons.tick} className="w-16 h-16 tint-gray-600 mb-4" style={{ tintColor: '#4B5563' }} />
+                                <Text className="text-white text-xl font-bold">No Watched Movies</Text>
+                                <Text className="text-gray-400 text-center mt-2 px-10">Movies you mark as watched will appear here.</Text>
+                            </View>
+                        ) : (
+                            <FlatList
+                                data={movies}
+                                renderItem={({ item }) => {
+                                    return (
+                                        <MovieCard {...item} id={item.movieId} />
+                                    )
+                                }}
+                                keyExtractor={(item) => item.id}
+                                numColumns={3}
+                                columnWrapperClassName="flex-start gap-5 pr-5 mb-10"
+                                className="mt-2 pb-32"
+                                scrollEnabled={false}
+                            />
+                        )
                     )}
                 </ScrollView>
             </View>

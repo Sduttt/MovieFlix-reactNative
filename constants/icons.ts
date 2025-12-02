@@ -8,6 +8,9 @@ import search from "@/assets/icons/search.png";
 import star from "@/assets/icons/star.png";
 import heart from "@/assets/icons/heart.png";
 import tick from "@/assets/icons/tick.png";
+import cross from "@/assets/icons/cross.png";
+import brokenHeart from "@/assets/icons/broken-heart.png";
+
 
 export const icons = {
     home,
@@ -19,5 +22,7 @@ export const icons = {
     play,
     arrow,
     heart,
-    tick
+    tick,
+    cross,
+    brokenHeart
 };

@@ -34,10 +34,10 @@ const Movie = () => {
                 ]
             )
             if (res.documents.length > 0) {
-                setIsWatchlist(true)
-                setDoc(res.documents[0])
-                setIsWatched(doc.isWatched)
-                setIsWatchlist(doc.isWatchlist)
+                const foundDoc = res.documents[0]
+                setDoc(foundDoc)
+                setIsWatched(foundDoc.isWatched)
+                setIsWatchlist(foundDoc.isWatchlist)
             }
         } catch (error) {
             console.log(error)
@@ -200,11 +200,11 @@ const Movie = () => {
                     <Image source={{ uri: `https://image.tmdb.org/t/p/w500${movie?.poster_path}` }} className='w-full h-[550px]' resizeMode='stretch' />
                     <View className='relative bottom-20 flex-row items-center justify-around px-5'>
                         <TouchableOpacity onPress={saveMovie} disabled={isWatched} className={` ${isWatched ? "bg-[#534d7d]" : "bg-[#6C5DD3]"} flex-row items-center justify-center gap-x-2 w-48 py-1 mr-4 rounded-3xl h-16`}>
-                            <Image source={icons.heart} className='size-6' />
+                            <Image source={isWatchlist ? icons.brokenHeart : icons.heart} className='size-6' />
                             <Text className={`text-white text-xl font-bold ${isWatched ? "text-gray-400" : "text-white"}`}>{isWatchlist ? "UNSAVE" : "SAVE"}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={watchMovie} className='flex-row items-center justify-center gap-x-2 bg-[#5dd365] w-48 py-1 ml-4 rounded-3xl h-16'>
-                            <Image source={icons.tick} className='size-6' />
+                            <Image source={isWatched ? icons.cross : icons.tick} className='size-6' />
                             <Text className='text-white text-xl font-bold'>{isWatched ? "NOT WATCHED" : "WATCHED"}</Text>
                         </TouchableOpacity>
                     </View>
