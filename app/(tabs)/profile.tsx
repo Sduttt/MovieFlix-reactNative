@@ -1,11 +1,10 @@
-
 import Signin from '@/components/Signin'
 import Signup from '@/components/Signup'
+import { icons } from '@/constants/icons'
 import { images } from '@/constants/images'
 import { useAuth } from '@/services/AuthContext'
-import { Link } from 'expo-router'
 import React, { useState } from 'react'
-import { ActivityIndicator, Image, Modal, ScrollView, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Image, Modal, ScrollView, Text, TextInput, ToastAndroid, TouchableOpacity, View, Linking } from 'react-native'
 
 const profile = () => {
     const { loading, user, logout, isNewUser, deleteAccount } = useAuth()
@@ -43,7 +42,6 @@ const profile = () => {
 
                 <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: 'center', padding: 24 }}>
 
-
                     <View className="items-center mt-8 mb-8">
                         <View className="w-32 h-32 rounded-full bg-[#6C5DD3] items-center justify-center shadow-lg shadow-[#6C5DD3]/50 mb-6 border-4 border-[#1F212C]">
                             <Text className="text-white text-5xl font-bold tracking-wider">
@@ -52,22 +50,7 @@ const profile = () => {
                         </View>
                         <Text className="text-white text-3xl font-bold mb-2">{user.name}</Text>
                         <Text className="text-gray-400 text-base">{user.email}</Text>
-
-                        <View className="mt-4 px-4 py-1 bg-[#1F212C] rounded-full border border-[#2D303E]">
-                            <Text className="text-[#6C5DD3] font-semibold text-sm">Free User</Text>
-                        </View>
                     </View>
-
-                    {/* Premium Card */}
-                    <TouchableOpacity className="w-full bg-[#6C5DD3] p-6 rounded-3xl mb-8 flex-row items-center justify-between shadow-lg shadow-[#6C5DD3]/30">
-                        <View>
-                            <Text className="text-white text-xl font-bold mb-1">Go Premium</Text>
-                            <Text className="text-white/80 text-sm">Enjoy an ad-free experience</Text>
-                        </View>
-                        <View className="w-12 h-12 bg-white/20 rounded-full items-center justify-center">
-                            <Text className="text-2xl">👑</Text>
-                        </View>
-                    </TouchableOpacity>
 
                     {/* Actions */}
                     <View className="w-full space-y-4">
@@ -86,9 +69,59 @@ const profile = () => {
                         </TouchableOpacity>
                     </View>
 
-                    {/* Footer */}
-                    <View className="mt-8 mb-4">
-                        <Text className="text-gray-500 text-sm">Contact Us: <Link href="mailto:support@movieapp.com">support@movieapp.com</Link></Text>
+                    {/* Developer Info Section */}
+                    <View className="w-full mt-8 bg-[#1F212C] rounded-3xl p-6 border border-[#2D303E]">
+                        <Text className="text-white text-xl font-bold mb-4">👨‍💻 About Developer</Text>
+
+                        {/* Email */}
+                        <TouchableOpacity
+                            onPress={() => Linking.openURL('mailto:subhamdutta588@gmail.com')}
+                            className="flex-row items-center mb-4 p-3 bg-[#2D303E] rounded-xl"
+                        >
+                            <Text className="text-2xl mr-3">📧</Text>
+                            <View className="flex-1">
+                                <Text className="text-gray-400 text-xs mb-1">Email</Text>
+                                <Text className="text-white text-sm">subhamdutta588@gmail.com</Text>
+                            </View>
+                        </TouchableOpacity>
+
+                        {/* Social Media Links */}
+                        <Text className="text-gray-400 text-sm mb-3">Connect with me:</Text>
+                        <View className="flex-row justify-between mb-4">
+                            {/* LinkedIn */}
+                            <TouchableOpacity
+                                onPress={() => Linking.openURL('https://www.linkedin.com/in/sduttt/')}
+                                className="flex-1 mr-2 p-4 bg-[#0A66C2] rounded-xl items-center"
+                            >
+                                <Image className="text-2xl mb-1" source={icons.linkedin} />
+                            </TouchableOpacity>
+
+                            {/* Facebook */}
+                            <TouchableOpacity
+                                onPress={() => Linking.openURL('https://www.facebook.com/subham.dutta.664725')}
+                                className="flex-1 mx-1 p-4 bg-[#1877F2] rounded-xl items-center"
+                            >
+                                <Image className="text-2xl mb-1" source={icons.facebook} />
+                            </TouchableOpacity>
+
+                            {/* Instagram */}
+                            <TouchableOpacity
+                                onPress={() => Linking.openURL('https://www.instagram.com/sdutttttt/')}
+                                className="flex-1 ml-2 p-4 rounded-xl items-center"
+                                style={{ backgroundColor: '#E4405F' }}
+                            >
+                                <Image className="text-2xl mb-1" source={icons.insta} />
+                            </TouchableOpacity>
+                        </View>
+
+                        {/* Source Code Button */}
+                        <TouchableOpacity
+                            onPress={() => Linking.openURL('https://github.com/Sduttt/MovieFlix-reactNative')}
+                            className="w-full p-4 bg-[#6C5DD3] rounded-2xl flex-row items-center justify-center"
+                        >
+                            <Image className="w-10 h-10 mr-4 mb-1" source={icons.github} />
+                            <Text className="text-white font-bold text-base">View Source Code on GitHub</Text>
+                        </TouchableOpacity>
                     </View>
                 </ScrollView>
 

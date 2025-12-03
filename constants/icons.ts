@@ -10,6 +10,10 @@ import heart from "@/assets/icons/heart.png";
 import tick from "@/assets/icons/tick.png";
 import cross from "@/assets/icons/cross.png";
 import brokenHeart from "@/assets/icons/broken-heart.png";
+import linkedin from "@/assets/icons/linkedin.png";
+import facebook from "@/assets/icons/facebook.png";
+import insta from "@/assets/icons/insta.png";
+import github from "@/assets/icons/github.png";
 
 
 export const icons = {
@@ -24,5 +28,9 @@ export const icons = {
     heart,
     tick,
     cross,
-    brokenHeart
+    brokenHeart,
+    linkedin,
+    facebook,
+    insta,
+    github
 };

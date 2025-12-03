@@ -99,9 +99,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             await account.deleteSession("current");
             setLoading(false);
             setUser(null);
+            ToastAndroid.show("Logout successful", ToastAndroid.LONG);
         } catch (error) {
             setLoading(false);
             console.log(error);
+            ToastAndroid.show("Logout failed", ToastAndroid.LONG);
         }
     }
 

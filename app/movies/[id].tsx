@@ -6,7 +6,7 @@ import { useAuth } from '@/services/AuthContext'
 import useFetch from '@/services/useFetch'
 import { router, useLocalSearchParams } from 'expo-router'
 import React, { useState, useEffect } from 'react'
-import { Image, ScrollView, Text, ToastAndroid, TouchableOpacity, View, Modal } from 'react-native'
+import { Image, ScrollView, Text, ToastAndroid, TouchableOpacity, View, Modal, Linking } from 'react-native'
 import YoutubePlayer from "react-native-youtube-iframe";
 import { ID, Query } from 'react-native-appwrite'
 
@@ -22,6 +22,7 @@ const Movie = () => {
     const [alertmsg, setAlertmsg] = useState<string>('')
     const [trailerKey, setTrailerKey] = useState<string | null>(null)
     const [modalVisible, setModalVisible] = useState(false)
+    const [adModalVisible, setAdModalVisible] = useState(false)
 
     useEffect(() => {
         const getTrailer = async () => {
@@ -32,6 +33,15 @@ const Movie = () => {
         }
         getTrailer()
     }, [id])
+
+    // Show ad modal after 5 seconds
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setAdModalVisible(true)
+        }, 5000) // 5 seconds
+
+        return () => clearTimeout(timer)
+    }, [])
 
     // Check if movie is in watchlist or watched
     const checkStatus = async () => {

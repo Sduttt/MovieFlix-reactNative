@@ -31,7 +31,7 @@ const Saved = () => {
                     Query.equal('isWatched', activeTab === 'watched')
                 ]
             )
-            setMovies(response.documents)
+            setMovies(response.documents.reverse())
         } catch (error) {
             console.log(error)
             ToastAndroid.show('Error fetching saved movies', ToastAndroid.LONG)
